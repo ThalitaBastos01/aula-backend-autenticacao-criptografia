@@ -13,13 +13,40 @@ const cadastrarUsuario = async (req, res) => {
         return res.status(201).json(novoUsuario.rows[0])
 
     } catch (error) {
-        console.log(error)
         return res.status(500).json({mensagem: 'Erro interno do servidor'})
     }
-
-    
 }
 
+const login = async (req, res) => {
+    const { email, senha} = req.body
+
+    try {
+
+        // se usuario como email requerido no corpo
+        const usuario = await pool.query('select * from usuarios where email = $1', [email])
+            // usuario não foi encontrado 
+        if (usuario.rowCount < 1) {
+            return res.status(404).json({mensagem: 'Email ou Senha invalida'})
+        }
+
+        const senhaValida = await bcrypt.compare(senha, usuario.rows[0].senha)
+
+        if (!senhaValida) {
+            return res.status(404).json({mensagem: 'Email ou Senha invalida'})
+        }
+
+        
+        return res.json('Usuario autenticado')
+
+        
+
+    } catch (error) {
+        return res.status(500).json({mensagem: 'Erro interno do servidor'})
+    }
+}
+
+
 module.exports = {
-    cadastrarUsuario
+    cadastrarUsuario,
+    login
 }
