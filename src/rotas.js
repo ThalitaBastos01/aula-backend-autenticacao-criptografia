@@ -7,7 +7,7 @@ const {
 	excluirCarro,
 } = require('./controladores/carros')
 
-const { cadastrarUsuario, login } = require('./controladores/usuarios')
+const { cadastrarUsuario, login, obterPerfil } = require('./controladores/usuarios')
 const verificarUsuarioLogado = require('./intermediarios/autenticacao')
 
 
@@ -17,9 +17,9 @@ rotas.post('/usuario', cadastrarUsuario)
 rotas.post('/login', login)
 
 // é nescessario que a verificação fique acima de todas as rotas que quero fazer essa autenticação. 
-verificarUsuarioLogado()
+rotas.use(verificarUsuarioLogado) // sempre passar dentro do -use-
 
-rotas.get('/perfil', )
+rotas.get('/perfil', obterPerfil)
 
 rotas.get('/carro', listarCarros)
 rotas.get('/carro/:id', detalharCarro)

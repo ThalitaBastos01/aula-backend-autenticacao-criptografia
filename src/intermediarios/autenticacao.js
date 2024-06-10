@@ -1,3 +1,4 @@
+const pool = require('../conexao')
 const jwt = require('jsonwebtoken')
 const senhaJwt = require('../senha.jwt')
 
@@ -15,11 +16,15 @@ const verificarUsuarioLogado = async (req, res, next) => {
         // verificação de autenticação de token
         const { id } = jwt.verify(token, senhaJwt)
 
-        const usuario = await pool.query('select * from usuarios where id = $1', [id])
+        const { rows, rowCount} = await pool.query('select * from usuarios where id = $1', [id,
 
-        if (!usuario) {
+        ])
+
+        if (rowCount < 1) {
             return res.status(401).json({mensagem: 'Não autorizado'})
         }
+        // perfil do usuario
+        req.usuario = rows[0]
 
         next()
     } catch (error) {
