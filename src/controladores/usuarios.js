@@ -1,5 +1,7 @@
 const pool = require('../conexao')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const senhaJwt = require('../senha.jwt')
 
 const cadastrarUsuario = async (req, res) => {
     const { nome, email, senha } = req.body
@@ -35,15 +37,20 @@ const login = async (req, res) => {
             return res.status(404).json({mensagem: 'Email ou Senha invalida'})
         }
 
-        
-        return res.json('Usuario autenticado')
+        // gerando token com a biblioteca npm install jsonwebtoken instalada - assim que o usuario loga é gerado um token 
+        const token = jwt.sign({id: usuario.rows[0].id}, senhaJwt, {expiresIn: '8h'})
 
-        
+        const { _, ...usuarioLogado} = usuario.rows[0]
 
+        return res.json({usuario: usuarioLogado, token})
+
+    
     } catch (error) {
         return res.status(500).json({mensagem: 'Erro interno do servidor'})
     }
 }
+
+
 
 
 module.exports = {
