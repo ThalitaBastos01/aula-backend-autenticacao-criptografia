@@ -38,7 +38,11 @@ const login = async (req, res) => {
         }
 
         // gerando token com a biblioteca npm install jsonwebtoken instalada - assim que o usuario loga é gerado um token 
-        const token = jwt.sign({id: usuario.rows[0].id}, senhaJwt, {expiresIn: '8h'})
+        const token = jwt.sign(
+            {id: usuario.rows[0].id}, 
+            senhaJwt, 
+            {expiresIn: '8h'}
+        )
 
         const { _, ...usuarioLogado} = usuario.rows[0]
 

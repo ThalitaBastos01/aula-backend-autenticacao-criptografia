@@ -1,19 +1,22 @@
 const pool = require('../conexao')
 
+
 const listarCarros = async (req, res) => {
+	
 	try {
 		const { rows } = await pool.query('select * from carros')
 
 		return res.json(rows)
 	} catch (error) {
+		
 		return res.status(500).json('Erro interno do servidor')
 	}
 }
 
 const detalharCarro = async (req, res) => {
-	const { id } = req.params
-
+	
 	try {
+	
 		const { rows, rowCount } = await pool.query(
 			'select * from carros where id = $1',
 			[id]
@@ -31,8 +34,9 @@ const detalharCarro = async (req, res) => {
 
 const cadastrarCarro = async (req, res) => {
 	const { modelo, marca, ano, cor, descricao } = req.body
-
+	
 	try {
+		
 		const { rows } = await pool.query(
 			'insert into carros (modelo, marca, ano, cor, descricao) values ($1, $2, $3, $4, $5) returning *',
 			[modelo, marca, ano, cor, descricao]
